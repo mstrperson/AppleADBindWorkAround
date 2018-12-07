@@ -1,7 +1,11 @@
 #!/bin/bash
 
 computer=$( hostname )
+
+# Drop the .local from the end that mac os tags on sometimes...
 computer=${computer%".local"}
+
+# Unlike windows, dsconfigad limits computer names to 15 characters...
 adSafeName=$( echo $computer | cut 1-15 )
 
 #ping the Domain or DC
