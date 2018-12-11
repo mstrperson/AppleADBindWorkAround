@@ -30,10 +30,11 @@ if [[ $? == 0 ]]; then
             #echo "<result>Cannot communicate with AD</result>"
 
             # Force Rebind
-			# -- First remove the corrupted trust relationship.
+	    # -- First remove the corrupted trust relationship.
             dsconfigad -force -remove -u jabber -p yepyepyep
-			
-			# -- Then attempt to rebind the mac to the domain (this command **does NOT** default to mobile accounts!) p.s.  a quick google search will give you the additional flags you need for that.
+		
+	    sleep 5     # sleep to allow the remove to have time to process and sync with domain.
+	    # -- Then attempt to rebind the mac to the domain (this command **does NOT** default to mobile accounts!) p.s.  a quick google search will give you the additional flags you need for that.
             response=$( dsconfigad -a $adSafeName -u <ad_service_account> -p <ad_passwd> -ou "CN=Computers,DC=domain,DC=com" -domain domain.com -localhome enable -useuncpath enable -groups "Domain Admins" -alldomains enable -force )
 
 			# this requires that you have postfix configured for email.  Check my script for GMail setup, or google it like I did~
@@ -51,6 +52,8 @@ if [[ $? == 0 ]]; then
         # Force Rebind
 		# -- First remove the corrupted trust relationship.
 		dsconfigad -force -remove -u jabber -p yepyepyep
+		
+		sleep 5 # sleep to allow the remove to have time to process and sync with the domain
 		
 		# -- Then attempt to rebind the mac to the domain (this command **does NOT** default to mobile accounts!) p.s.  a quick google search will give you the additional flags you need for that.
 		response=$( dsconfigad -a $adSafeName -u <ad_service_account> -p <ad_passwd> -ou "CN=Computers,DC=domain,DC=com" -domain domain.com -localhome enable -useuncpath enable -groups "Domain Admins" -alldomains enable -force )
