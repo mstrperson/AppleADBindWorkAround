@@ -48,10 +48,12 @@ else
 fi
 
 if [[ $10 != "" ]]; then
+    # Harvest the hostname from the local computer.
     computer=$( hostname )
     # Drop the .local from the end that mac os tags on sometimes...
     computer=${computer%".local"}
 else
+    # Use the Jamf Pro Computer Name field.
     computer=$2
 fi
 
@@ -88,9 +90,9 @@ if [[ $? == 0 ]]; then
 
 	    # this requires that you have postfix configured for email.  Check my script for GMail setup, or google it like I did~
             if [[ "$response" == "Settings changed successfully" ]]; then
-                echo "$computer was successfully rebound to the domain automatically when a problem was detected." | mail -s "$computer rebound to domain" $EMAIL_ADDRESS
+                echo "$computer ($2) was successfully rebound to the domain automatically when a problem was detected." | mail -s "$computer ($2) rebound to domain" $EMAIL_ADDRESS
             else
-                echo "$computer failed to automatically rebind with the domain.  $response" | mail -s "$computer needs attention" $EMAIL_ADDRESS
+                echo "$computer ($2) failed to automatically rebind with the domain.  $response" | mail -s "$computer ($2) needs attention" $EMAIL_ADDRESS
             fi
 
         fi
@@ -107,17 +109,17 @@ if [[ $? == 0 ]]; then
 	response=$( dsconfigad -a $adSafeName -u $BIND_USER -p $BIND_PWD -ou $LDAP_OU -domain $DOMAIN_NAME -localhome enable -useuncpath enable -groups "Domain Admins" -alldomains enable -force )
 
         if [[ "$response" == "Settings changed successfully" ]]; then
-            echo "$computer was successfully rebound to the domain automatically when a problem was detected." | mail -s "$computer rebound to domain" $EMAIL_ADDRESS
+            echo "$computer ($2) was successfully rebound to the domain automatically when a problem was detected." | mail -s "$computer ($2) rebound to domain" $EMAIL_ADDRESS
         else
-            echo "$computer failed to automatically rebind with the domain.  $response" | mail -s "$computer needs attention" $EMAIL_ADDRESS
+            echo "$computer ($2) failed to automatically rebind with the domain.  $response" | mail -s "$computer ($2) needs attention" $EMAIL_ADDRESS
         fi
 
     fi
 elif [[ $bftr == "Bound Correctly" ]]; then
     # We can't see the DCs, so no way to properly check
-    echo "$computer can't see the DC????" | mail -s "$computer needs attention" $EMAIL_ADDRESS
+    echo "$computer ($2) can't see the DC????" | mail -s "$computer ($2) needs attention" $EMAIL_ADDRESS
 else
-    echo "$computer couldn't ping DC" | mail -s "$computer needs attention" $EMAIL_ADDRESS
+    echo "$computer ($2) couldn't ping DC" | mail -s "$computer ($2) needs attention" $EMAIL_ADDRESS
 fi
 
 exit 1
